@@ -8,10 +8,10 @@ token = "MTE4ODk2NzEzMTgwMzU2NjIwMw.GE4Egf.6R5aC_4DdydmOnB0HLpkujU4brEyjxu502e89
 intents = discord.Intents.all()
 intents.messages = True    
 bot = commands.Bot(command_prefix="!", intents=intents)
-channel = bot.get_channel(1188907878065651845)
+# channel = bot.get_channel(1188907878065651845)
 
-lol_watcher = LolWatcher("RGAPI-4b82fca5-d98f-4214-a03a-594c7e62de2e")
-region = "na1"
+lol_watcher = LolWatcher("RGAPI-76e48d9c-736b-4689-9264-7ecfe6c80c82")
+region_set = "na1"
 
 @bot.event
 async def on_ready():
@@ -20,7 +20,7 @@ async def on_ready():
 
 @bot.command(name="helpme")
 async def help(ctx):
-    await ctx.send('```Définir votre région: !my_region = <your_region> \nVoir votre profil: !profil <region> "<pseudo>"```')
+    await ctx.send('```Définir votre région: !my_region = <your_region> \n Voir votre profil: !profil <region> "<pseudo>"```')
 
      
     
@@ -52,28 +52,37 @@ async def history_profil(ctx, region_set, nb_games, pseudo):
 
 @bot.command(name="fil")
 async def fil(ctx, region_set, pseudo):
+        
         info = lol_watcher.summoner.by_name(region_set, pseudo)
         puuid = info["puuid"]
-
-        region = region_set
-        player = pseudo
-
+        player = Profil(region_set, pseudo)
+        
         matchid = lol_watcher.match.matchlist_by_puuid(region=region_set, puuid=puuid, count=1)
+        
         
         await ctx.send("Joueur choisi, en attente d'un nouveau match")
         
         while True:
             temp = matchid
             
-            matchid = lol_watcher.match.matchlist_by_puuid(region=region_set, puuid=puuid, count=1)
+            matchid = lol_watcher.match.matchlist_by_puuid(region=region_set, puuid=puuid, count=1) #Utilise l'API pour retrouver l'ID du dernier match
+            previous_lp = player.lp()
 
             if matchid != temp:
-                statsImage(region, player, matchid[0]) # Met les stats du match en image
+                
+                lpGain = previous_lp - player.lp()
+                if lpGain == 0:
+                    lpGain = "?"
+                elif lpGain > 0:
+                    lpGain = "+"+str(lpGain)
+                elif lpGain < 0:
+                    lpGain = "-"+str(lpGain)
+                # Calcul le gain de LP
+                
+                
+                statsImage(region_set, pseudo, matchid[0], str(lpGain)) # Met les stats du match en image
             
-                await ctx.send(file=discord.File('img/match'+ matchid[0]+'.png'))
-            
-            else:
-                await ctx.send('Aucun nouveau match')
+                await ctx.send(file=discord.File('img/match/match'+ matchid[0]+'.png'))
             
             await asyncio.sleep(30)
         

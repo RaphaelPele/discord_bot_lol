@@ -3,7 +3,7 @@ from riotwatcher import LolWatcher, ApiError
 
 
 
-lol_watcher = LolWatcher("RGAPI-4b82fca5-d98f-4214-a03a-594c7e62de2e")
+lol_watcher = LolWatcher("RGAPI-76e48d9c-736b-4689-9264-7ecfe6c80c82")
 region = "euw1"
 
 
@@ -20,6 +20,15 @@ class Profil:
         self.queue = "RANKED_SOLO_5x5"
         self.region_list = ["BR1", "EUN1", "EUW1", "JP1", "KR", "LA1", "LA2", "NA1", "OC1", "TR1", "OC1", "TR1", "RU", "PH2", "SG2", "TH2", "TW2", "VN2"]
 
+    def lp(self):
+        rank = {'I' : 300, 'II': 200, 'III': 100, 'IV': 0}
+        
+        player = Profil(self.region, self.pseudo)
+        temp_rank = player.classement()[2]
+        
+        previous_lp = rank[temp_rank] + player.classement()[3] 
+        
+        return previous_lp
 
     def getIdPlayer(self):
         """Return ID player
@@ -148,10 +157,10 @@ class Match:
     def get_champion_icon_path(self)-> str:
         return "img/champIcon/" + self.champion + "Square.png"       
         
-          
+    
           
 
-def statsImage(region:str,pseudo:str,match_id:str):
+def statsImage(region:str,pseudo:str,match_id:str, lpGain:str):
     """Create image that show stats of the player for the match
 
     Args:
@@ -164,7 +173,7 @@ def statsImage(region:str,pseudo:str,match_id:str):
     
     color = (158,145,142)
     font = ImageFont.truetype('arial', 18)
-    coordonnes = {'kills': (291, 21), 'deaths': (326,21), 'assists': (359, 21), 'win': (23,60), 'kda': (305,45), 'goldsEarned': (460,15), 'gameDuration' : (23,80)}
+    coordonnes = {'pseudo': (23,35), 'kills': (291, 21), 'deaths': (326,21), 'assists': (359, 21), 'win': (23,60), 'kda': (305,45), 'goldsEarned': (460,15), 'gameDuration' : (23,80), 'lpGain': (460,40)}
     
     # Affiche le temps en minute et en secondes
     minutes = match.gameDuration // 60
@@ -176,22 +185,24 @@ def statsImage(region:str,pseudo:str,match_id:str):
         imgResult = Image.open(r"img\opgg_win_template.png")
         imgResult = imgResult.convert("RGBA")
         draw = ImageDraw.Draw(imgResult)
-        draw.text(coordonnes['win'], 'Victory', font= font, fill='gray')
+        draw.text(coordonnes['win'], 'Victory', font= font, fill=color)
     
     # Si win = False -> Defeat   
     else:
         imgResult = Image.open(r"img\opgg_lose_template.png")
         imgResult = imgResult.convert("RGBA")
         draw = ImageDraw.Draw(imgResult)
-        draw.text(coordonnes['win'], 'Defeat', font= font, fill='gray')
+        draw.text(coordonnes['win'], 'Defeat', font= font, fill=color)
     
     # Toutes les données à écrire
+    draw.text(coordonnes['pseudo'], str(pseudo), font= font, fill=color)
     draw.text(coordonnes['kills'],str(match.kills), font= font, fill=color)
     draw.text(coordonnes['deaths'], str(match.deaths), font= font, fill=color)
     draw.text(coordonnes['assists'], str(match.assists), font= font, fill=color)
     draw.text(coordonnes['goldsEarned'],f"Golds earned : {match.goldsEarned}", font= font, fill=color)
-    draw.text(coordonnes['kda'],f"KDA {match.kda}", font= font, fill=color)
+    draw.text(coordonnes['kda'],f"KDA {round(match.kda, 2)}", font= font, fill=color)
     draw.text(coordonnes['gameDuration'],str(gametime), font=font, fill=color)
+    draw.text(coordonnes["lpGain"],f'{str(lpGain)} LP', font= font, fill= color)
     
     # champion icon
     championIcon = Image.open(match.get_champion_icon_path())
@@ -210,18 +221,23 @@ def statsImage(region:str,pseudo:str,match_id:str):
     imgResult.save('img/match/match'+match_id+'.png', 'png')
     
 
-
 info = lol_watcher.summoner.by_name("euw1", "raphalefou79")
 puuid = info["puuid"]
 
 region = "euw1"
 player = "raphalefou79"
 
-matchlist = lol_watcher.match.matchlist_by_puuid(region="euw1", puuid=puuid, count=5, queue=420)
-for match_id in matchlist:
-    match = Match(region, player, match_id)
-    statsImage(region, player, match_id)
+lol_watcher.match.matchlist_by_puuid(region=region, puuid=puuid, count=1)
 
+matchid = lol_watcher.match.matchlist_by_puuid(region=region, puuid=puuid, count=1)
 
-player1 = Profil("euw1", "raphalefou")
-print(player1.classement())
+for match in matchid:
+
+    game = lol_watcher.match.by_id(match_id=match, region=region)
+    statsImage("euw1", "raphalefou79", match, str(25))
+
+# player = Profil("euw1", "raphalefou79")
+# print(player.classement()[2])
+
+# lp = lol_watcher.summoner.by_name("euw1", "raphalefou79")
+# lol_watcher.league.by_summoner("euw1", lp['id'])
