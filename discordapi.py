@@ -4,7 +4,7 @@ from discord.ext import commands
 from image_class import statsImage, Profil
 import asyncio
 
-token = "MTE4ODk2NzEzMTgwMzU2NjIwMw.GE4Egf.6R5aC_4DdydmOnB0HLpkujU4brEyjxu502e89Q"
+token = "MTE4ODk2NzEzMTgwMzU2NjIwMw.G6cTDw.Ao_rz2tnigVxR1eW02d4eJOI9KpC9c_z1QwKU8"
 intents = discord.Intents.all()
 intents.messages = True    
 bot = commands.Bot(command_prefix="!", intents=intents)
