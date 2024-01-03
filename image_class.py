@@ -3,7 +3,7 @@ from riotwatcher import LolWatcher, ApiError
 
 
 
-lol_watcher = LolWatcher("RGAPI-76e48d9c-736b-4689-9264-7ecfe6c80c82")
+lol_watcher = LolWatcher("RGAPI-99ca0b18-ecd8-44be-a6c6-42e36154de7f")
 region = "euw1"
 
 
@@ -172,7 +172,6 @@ def statsImage(region:str,pseudo:str,match_id:str, lpGain:str):
     
     
     color = (158,145,142)
-    font = ImageFont.truetype('arial', 18)
     coordonnes = {'pseudo': (23,35), 'kills': (291, 21), 'deaths': (326,21), 'assists': (359, 21), 'win': (23,60), 'kda': (305,45), 'goldsEarned': (460,15), 'gameDuration' : (23,80), 'lpGain': (460,40)}
     
     # Affiche le temps en minute et en secondes
@@ -182,27 +181,27 @@ def statsImage(region:str,pseudo:str,match_id:str, lpGain:str):
     
     # Si win = True -> écrire Victory
     if match.win == True:
-        imgResult = Image.open(r"img\opgg_win_template.png")
+        imgResult = Image.open(r"img/opgg_win_template.png")
         imgResult = imgResult.convert("RGBA")
         draw = ImageDraw.Draw(imgResult)
-        draw.text(coordonnes['win'], 'Victory', font= font, fill=color)
+        draw.text(coordonnes['win'], 'Victory', fill=color)
     
     # Si win = False -> Defeat   
     else:
-        imgResult = Image.open(r"img\opgg_lose_template.png")
+        imgResult = Image.open(r"img/opgg_lose_template.png")
         imgResult = imgResult.convert("RGBA")
         draw = ImageDraw.Draw(imgResult)
-        draw.text(coordonnes['win'], 'Defeat', font= font, fill=color)
+        draw.text(coordonnes['win'], 'Defeat', fill=color)
     
     # Toutes les données à écrire
-    draw.text(coordonnes['pseudo'], str(pseudo), font= font, fill=color)
-    draw.text(coordonnes['kills'],str(match.kills), font= font, fill=color)
-    draw.text(coordonnes['deaths'], str(match.deaths), font= font, fill=color)
-    draw.text(coordonnes['assists'], str(match.assists), font= font, fill=color)
-    draw.text(coordonnes['goldsEarned'],f"Golds earned : {match.goldsEarned}", font= font, fill=color)
-    draw.text(coordonnes['kda'],f"KDA {round(match.kda, 2)}", font= font, fill=color)
-    draw.text(coordonnes['gameDuration'],str(gametime), font=font, fill=color)
-    draw.text(coordonnes["lpGain"],f'{str(lpGain)} LP', font= font, fill= color)
+    draw.text(coordonnes['pseudo'], str(pseudo), fill=color)
+    draw.text(coordonnes['kills'],str(match.kills), fill=color)
+    draw.text(coordonnes['deaths'], str(match.deaths), fill=color)
+    draw.text(coordonnes['assists'], str(match.assists), fill=color)
+    draw.text(coordonnes['goldsEarned'],f"Golds earned : {match.goldsEarned}", fill=color)
+    draw.text(coordonnes['kda'],f"KDA {round(match.kda, 2)}", fill=color)
+    draw.text(coordonnes['gameDuration'],str(gametime), fill=color)
+    draw.text(coordonnes["lpGain"],f'{str(lpGain)} LP', fill= color)
     
     # champion icon
     championIcon = Image.open(match.get_champion_icon_path())
@@ -221,6 +220,8 @@ def statsImage(region:str,pseudo:str,match_id:str, lpGain:str):
     imgResult.save('img/match/match'+match_id+'.png', 'png')
     
 
+
+
 info = lol_watcher.summoner.by_name("euw1", "raphalefou79")
 puuid = info["puuid"]
 
@@ -235,6 +236,7 @@ for match in matchid:
 
     game = lol_watcher.match.by_id(match_id=match, region=region)
     statsImage("euw1", "raphalefou79", match, str(25))
+
 
 # player = Profil("euw1", "raphalefou79")
 # print(player.classement()[2])
