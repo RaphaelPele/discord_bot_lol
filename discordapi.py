@@ -109,7 +109,7 @@ async def fil_player(ctx):
 async def stop_follow(ctx, pseudo):
     if pseudo in liste_player:
         liste_player.remove(pseudo)
-        await ctx.send(f'{pseudo} a été retiré des joueurs suivis')
+        await ctx.send(f'{pseudo} a été retiré des joueurs suivis !')
     else:
         await ctx.send(f"{pseudo} n'est pas dans la liste des joueurs suivis !")
 
