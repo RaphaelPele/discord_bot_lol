@@ -7,7 +7,7 @@ import asyncio
 
 liste_player = {}
 
-token = "MTE4ODk2NzEzMTgwMzU2NjIwMw.G_vUQP.gWvwuVInsNTppYrFCdEFN6trobOVS4NoY38W54"
+token = ""
 intents = discord.Intents.all()
 intents.messages = True    
 bot = commands.Bot(command_prefix="!", intents=intents)
