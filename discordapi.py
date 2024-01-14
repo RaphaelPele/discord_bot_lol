@@ -91,7 +91,11 @@ async def follow(ctx, region_set, pseudo):
                         
                     elif lpGain > 0:
                         lpGain = "+"+str(lpGain)
+                        
+                    if lpGain == None:
+                        lpGain = "?"
                     # Calcul le gain de LP
+                    
                     
                     
                     statsImage(region_set, pseudo, matchid[0], str(lpGain)) # Met les stats du match en image
