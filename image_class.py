@@ -43,6 +43,12 @@ class Profil:
         
         return player_id
     
+    def getPuuidPlayer(self):
+        info = lol_watcher.summoner.by_name(self.region.upper(), self.pseudo)
+        
+        player_id = info['puuid']
+        
+        return player_id
 
     def isRegionValid(self):
         """Vérifie si la région saisie existe
@@ -155,22 +161,22 @@ class Match:
     
     
     def get_champion_icon_path(self)-> str:
-        return "img/champIcon/" + self.champion + "Square.png"       
-        
+        return "/home/rapha/dev/discord_bot_lol/img/champIcon/" + self.champion + "Square.png"       
     
           
 
-def statsImage(region:str,pseudo:str,match_id:str, lpGain:str):
+def statsImage(region:str,pseudo:str,match_id:str, lpGain:str = "0"):
     """Create image that show stats of the player for the match
 
     Args:
-        region (str): server of tha match
+        region (str): server of the match
         pseudo (str): pseudo of player
         match_id (str): id of match
     """
     match = Match(region, pseudo, match_id)
     
-    
+    font = ImageFont.truetype("arial.ttf", 17)
+
     color = (158,145,142)
     coordonnes = {'pseudo': (23,35), 'kills': (291, 21), 'deaths': (326,21), 'assists': (359, 21), 'win': (23,60), 'kda': (305,45), 'goldsEarned': (460,15), 'gameDuration' : (23,80), 'lpGain': (460,40)}
     
@@ -181,27 +187,27 @@ def statsImage(region:str,pseudo:str,match_id:str, lpGain:str):
     
     # Si win = True -> écrire Victory
     if match.win == True:
-        imgResult = Image.open(r"img/opgg_win_template.png")
+        imgResult = Image.open(r"/home/rapha/dev/discord_bot_lol/img/opgg_win_template.png")
         imgResult = imgResult.convert("RGBA")
         draw = ImageDraw.Draw(imgResult)
         draw.text(coordonnes['win'], 'Victory', fill=color)
     
     # Si win = False -> Defeat   
     else:
-        imgResult = Image.open(r"img/opgg_lose_template.png")
+        imgResult = Image.open(r"/home/rapha/dev/discord_bot_lol/img/opgg_lose_template.png")
         imgResult = imgResult.convert("RGBA")
         draw = ImageDraw.Draw(imgResult)
         draw.text(coordonnes['win'], 'Defeat', fill=color)
     
     # Toutes les données à écrire
-    draw.text(coordonnes['pseudo'], str(pseudo), fill=color)
-    draw.text(coordonnes['kills'],str(match.kills), fill=color)
-    draw.text(coordonnes['deaths'], str(match.deaths), fill=color)
-    draw.text(coordonnes['assists'], str(match.assists), fill=color)
-    draw.text(coordonnes['goldsEarned'],f"Golds earned : {match.goldsEarned}", fill=color)
-    draw.text(coordonnes['kda'],f"KDA {round(match.kda, 2)}", fill=color)
-    draw.text(coordonnes['gameDuration'],str(gametime), fill=color)
-    draw.text(coordonnes["lpGain"],f'{str(lpGain)} LP', fill= color)
+    draw.text(coordonnes['pseudo'], str(pseudo), fill=color, font= font)
+    draw.text(coordonnes['kills'],str(match.kills), fill=color, font=font)
+    draw.text(coordonnes['deaths'], str(match.deaths), fill=color, font=font)
+    draw.text(coordonnes['assists'], str(match.assists), fill=color, font=font)
+    draw.text(coordonnes['goldsEarned'],f"Golds earned : {match.goldsEarned}", fill=color, font=font)
+    draw.text(coordonnes['kda'],f"KDA {round(match.kda, 2)}", fill=color, font=font)
+    draw.text(coordonnes['gameDuration'],str(gametime), fill=color, font=font)
+    draw.text(coordonnes["lpGain"],f'{str(lpGain)} LP', fill= color, font=font)
     
     # champion icon
     championIcon = Image.open(match.get_champion_icon_path())
@@ -217,7 +223,7 @@ def statsImage(region:str,pseudo:str,match_id:str, lpGain:str):
     
     imgResult.alpha_composite(championIcon, (180,10))
 
-    imgResult.save('img/match/match'+match_id+'.png', 'png')
+    imgResult.save('/home/rapha/dev/discord_bot_lol/img/match/match'+match_id+'.png', 'png')
     
 
 
