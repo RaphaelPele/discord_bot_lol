@@ -161,7 +161,7 @@ class Match:
     
     
     def get_champion_icon_path(self)-> str:
-        return "/home/rapha/dev/discord_bot_lol/img/champIcon/" + self.champion + "Square.png"       
+        return "C:\\Users\\rapha\\Desktop\\dev\\discord-bot\\img\\champIcon\\" + self.champion + "Square.png"       
     
           
 
@@ -187,14 +187,14 @@ def statsImage(region:str,pseudo:str,match_id:str, lpGain:str = "0"):
     
     # Si win = True -> écrire Victory
     if match.win == True:
-        imgResult = Image.open(r"/home/rapha/dev/discord_bot_lol/img/opgg_win_template.png")
+        imgResult = Image.open(r"C:\Users\rapha\Desktop\dev\discord-bot\img\opgg_win_template.png")
         imgResult = imgResult.convert("RGBA")
         draw = ImageDraw.Draw(imgResult)
         draw.text(coordonnes['win'], 'Victory', fill=color)
     
     # Si win = False -> Defeat   
     else:
-        imgResult = Image.open(r"/home/rapha/dev/discord_bot_lol/img/opgg_lose_template.png")
+        imgResult = Image.open(r"C:\Users\rapha\Desktop\dev\discord-bot\img\opgg_lose_template.png")
         imgResult = imgResult.convert("RGBA")
         draw = ImageDraw.Draw(imgResult)
         draw.text(coordonnes['win'], 'Defeat', fill=color)
@@ -223,7 +223,8 @@ def statsImage(region:str,pseudo:str,match_id:str, lpGain:str = "0"):
     
     imgResult.alpha_composite(championIcon, (180,10))
 
-    imgResult.save('/home/rapha/dev/discord_bot_lol/img/match/match'+match_id+'.png', 'png')
+    imgResult.save('C:\\Users\\rapha\\Desktop\\dev\\discord-bot\\img\\match\\match' + match_id + '.png', 'png')
+
     
 
 
