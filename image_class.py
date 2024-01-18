@@ -84,6 +84,21 @@ class Profil:
         else:
             return "Votre region est invalide"
         
+    def rank(self): 
+        
+        if self.isRegionValid() == True:
+            
+            # Renvoi les stats de ranked du joueur
+            my_ranked_stats = lol_watcher.league.by_summoner(self.region.upper(), self.getIdPlayer())
+            
+            # Parcourt les dictionnaire de my_ranked_stats pour trouver les stats de la RANKED_SOLO_5x5
+            for index, dictionnaire in enumerate(my_ranked_stats):
+                if dictionnaire["queueType"] == self.queue:
+                    
+                    return (my_ranked_stats[index]["summonerName"], my_ranked_stats[index]["tier"], my_ranked_stats[index]["rank"], my_ranked_stats[index]["leaguePoints"])
+        else:
+            return "Votre region est invalide"
+    
 
 
 
@@ -174,11 +189,12 @@ def statsImage(region:str,pseudo:str,match_id:str, lpGain:str = "0"):
         match_id (str): id of match
     """
     match = Match(region, pseudo, match_id)
-    
+    player = Profil(region, pseudo)
     font = ImageFont.truetype("arial.ttf", 17)
+    font_bold = ImageFont.truetype("C:\\Windows\\Fonts\\arialbd.ttf", 17)
 
     color = (158,145,142)
-    coordonnes = {'pseudo': (23,35), 'kills': (291, 21), 'deaths': (326,21), 'assists': (359, 21), 'win': (23,60), 'kda': (305,45), 'goldsEarned': (460,15), 'gameDuration' : (23,80), 'lpGain': (460,40)}
+    coordonnes = {'pseudo': (23,35), 'kills': (291, 21), 'deaths': (326,21), 'assists': (359, 21), 'win': (23,60), 'kda': (305,45), 'goldsEarned': (460,15), 'gameDuration' : (23,80), 'lpGain': (460,40), 'rank': (460,60)}
     
     # Affiche le temps en minute et en secondes
     minutes = match.gameDuration // 60
@@ -190,24 +206,25 @@ def statsImage(region:str,pseudo:str,match_id:str, lpGain:str = "0"):
         imgResult = Image.open(r"C:\Users\rapha\Desktop\dev\discord-bot\img\opgg_win_template.png")
         imgResult = imgResult.convert("RGBA")
         draw = ImageDraw.Draw(imgResult)
-        draw.text(coordonnes['win'], 'Victory', fill=color)
+        draw.text(coordonnes['win'], 'Victory', fill=color, font= font)
     
     # Si win = False -> Defeat   
     else:
         imgResult = Image.open(r"C:\Users\rapha\Desktop\dev\discord-bot\img\opgg_lose_template.png")
         imgResult = imgResult.convert("RGBA")
         draw = ImageDraw.Draw(imgResult)
-        draw.text(coordonnes['win'], 'Defeat', fill=color)
+        draw.text(coordonnes['win'], 'Defeat', fill=color, font= font)
     
     # Toutes les données à écrire
-    draw.text(coordonnes['pseudo'], str(pseudo), fill=color, font= font)
+    draw.text(coordonnes['pseudo'], str(pseudo), fill=color, font= ImageFont.truetype("C:\\Windows\\Fonts\\arialbd.ttf", 18))
     draw.text(coordonnes['kills'],str(match.kills), fill=color, font=font)
     draw.text(coordonnes['deaths'], str(match.deaths), fill=color, font=font)
     draw.text(coordonnes['assists'], str(match.assists), fill=color, font=font)
     draw.text(coordonnes['goldsEarned'],f"Golds earned : {match.goldsEarned}", fill=color, font=font)
     draw.text(coordonnes['kda'],f"KDA {round(match.kda, 2)}", fill=color, font=font)
-    draw.text(coordonnes['gameDuration'],str(gametime), fill=color, font=font)
-    draw.text(coordonnes["lpGain"],f'{str(lpGain)} LP', fill= color, font=font)
+    draw.text(coordonnes['gameDuration'],str(gametime).upper(), fill=color, font=font)
+    # draw.text(coordonnes["lpGain"],f'{str(lpGain)} LP', fill= color, font=font)
+    draw.text(coordonnes['lpGain'], f'{player.rank()[1]} {player.rank()[2]} {player.rank()[3]} LP', fill = color, font = font)
     
     # champion icon
     championIcon = Image.open(match.get_champion_icon_path())
@@ -229,20 +246,20 @@ def statsImage(region:str,pseudo:str,match_id:str, lpGain:str = "0"):
 
 
 
-info = lol_watcher.summoner.by_name("euw1", "raphalefou79")
-puuid = info["puuid"]
+# info = lol_watcher.summoner.by_name("euw1", "raphalefou79")
+# puuid = info["puuid"]
 
-region = "euw1"
-player = "raphalefou79"
+# region = "euw1"
+# player = "raphalefou79"
 
-lol_watcher.match.matchlist_by_puuid(region=region, puuid=puuid, count=1)
+# lol_watcher.match.matchlist_by_puuid(region=region, puuid=puuid, count=1)
 
-matchid = lol_watcher.match.matchlist_by_puuid(region=region, puuid=puuid, count=1)
+# matchid = lol_watcher.match.matchlist_by_puuid(region=region, puuid=puuid, count=1)
 
-for match in matchid:
+# for match in matchid:
 
-    game = lol_watcher.match.by_id(match_id=match, region=region)
-    statsImage("euw1", "raphalefou79", match, str(25))
+#     game = lol_watcher.match.by_id(match_id=match, region=region)
+#     statsImage("euw1", "raphalefou79", match, str(25))
 
 
 # player = Profil("euw1", "raphalefou79")

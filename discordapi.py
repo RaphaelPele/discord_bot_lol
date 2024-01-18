@@ -6,7 +6,6 @@ import sqlite3
 from image_class import statsImage, Profil
 import asyncio
 
-liste_player = {}
 
 token = "MTE4ODk2NzEzMTgwMzU2NjIwMw.G0zcRB.ylvS3C-lZYBcvaQfifRiCK9QW0VNrokvGsmG9g"
 intents = discord.Intents.all()
@@ -17,7 +16,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 #Création de la base de donnée qui stock les joueurs
 db = sqlite3.connect("database.sqlite3")
 cur = db.cursor()
-cur.execute("CREATE TABLE IF NOT EXISTS follow(pseudo STR, region STR, matchid STR, puuid STR)")
+cur.execute("CREATE TABLE IF NOT EXISTS follow(pseudo STR, region STR, matchid STR, puuid STR, channel_id)")
 #Création de la base de donnée qui stock les joueurs
 
 #Connexion à l'api Riot Games
@@ -30,11 +29,6 @@ async def on_ready():
         print(f'Logged on as {bot.user}!')
         follow_send.start()
         
-
-
-@bot.command(name="helpme")
-async def help(ctx):
-    await ctx.send('```Définir votre région: !my_region = <your_region> \n Voir votre profil: !profil <region> "<pseudo>"```')
 
      
 @bot.command(name="profil")
@@ -66,7 +60,8 @@ async def history_profil(ctx, region_set, nb_games, pseudo):
 async def follow(ctx, region_set, pseudo):
     
     try:
-        cur.execute("SELECT pseudo, region FROM follow WHERE pseudo = (?) AND region = (?)", (pseudo, region_set))
+        channel = ctx.channel.id
+        cur.execute("SELECT pseudo, region FROM follow WHERE pseudo = (?) AND region = (?) AND region = (?)", (pseudo, region_set, channel))
         result = cur.fetchone()
         
         if result:
@@ -79,10 +74,9 @@ async def follow(ctx, region_set, pseudo):
             matchid = lol_watcher.match.matchlist_by_puuid(region=region_set, puuid=puuid, count=1)
             
             await ctx.send("Joueur choisi, en attente d'un nouveau match ! Vous pouvez arretez de suivre un joueur avec : **!stop-follow <player>**")  
-            
                       
-            player_insert = "INSERT INTO follow(pseudo, region, matchid, puuid) VALUES (?, ?, ?, ?)"
-            data = (pseudo, region_set, matchid[0], puuid)
+            player_insert = "INSERT INTO follow(pseudo, region, matchid, puuid, channel_id) VALUES (?, ?, ?, ?, ?)"
+            data = (pseudo, region_set, matchid[0], puuid, channel)
             
             cur.execute(player_insert, data)
             db.commit()
@@ -94,21 +88,38 @@ async def follow(ctx, region_set, pseudo):
 
 @bot.command(name="followed-player")
 async def fil_player(ctx):
-     await ctx.send(f'Vous suivez actuellement : {liste_player}')
+    
+    liste_player = ""
+    channel_id = ctx.channel.id
+    cur.execute("SELECT pseudo FROM follow WHERE channel_id = ?", (channel_id,))
+    players = cur.fetchall()
+    
+    if players:
+        for row in players:
+            print(row[0])
+            liste_player += f' {row[0]},'
+        await ctx.send(f'Vous suivez actuellement : **{liste_player}**')
+        
+    else:
+        await ctx.send("Vous ne suivez **personne** !")
+
         
         
 @bot.command(name="stop-follow")
 async def stop_follow(ctx, pseudo):
-    if pseudo in liste_player:
-        liste_player.remove(pseudo)
-        await ctx.send(f'{pseudo} a été retiré des joueurs suivis !')
-    else:
-        await ctx.send(f"{pseudo} n'est pas dans la liste des joueurs suivis !")
+    
+    channel_id = ctx.channel.id
+    cur.execute("DELETE FROM follow WHERE pseudo = ? AND channel_id = ?", (pseudo, channel_id))
+    db.commit()
+    
+    await ctx.send(f'Le joueur **{pseudo}** a été supprimé !')
+
 
 
 @tasks.loop(seconds= 30)
 async def follow_send():
-    print("Tache follow")
+    
+    # print("Tache follow")
     cur.execute("SELECT * FROM follow")
     rows = cur.fetchall() #Liste des joueurs à parcourir
     
@@ -116,14 +127,27 @@ async def follow_send():
         
         previous_matchid = row[2]
         present_matchid = lol_watcher.match.matchlist_by_puuid(region= row[1], puuid= row[3], count= 1) #Regarde si le joueur a fait un nouveau match
-
+        # print(row[0])
         if previous_matchid != present_matchid[0]:
-            cur.execute("UPDATE follow SET matchid = ? WHERE matchid = ?", (present_matchid[0], previous_matchid[0]))
-            print('test')
-            statsImage(row[1], row[0], present_matchid) # Met les stats du match en image
+            
+            cur.execute("UPDATE follow SET matchid = ? WHERE matchid = ?", (present_matchid[0], previous_matchid)) # Met à jour la base de donnée avec l'ID du nouveau match
+            db.commit()
+            
+            statsImage(row[1], row[0], present_matchid[0]) # Met les stats du match en image
+            print(f"Updating for {row[0]}")
+            
+            channel = bot.get_channel(row[4]) #Récupère l'ID du channel pour envoyer le message au bon endroit
+            # print("test")
+            
+            try:
+                await channel.send(file=discord.File(r'C:\Users\rapha\Desktop\dev\discord-bot\img\match\match'+ row[2]+'.png'))
+            except Exception as e:
+                print(f"Erreur lors de l'envoi du fichier : {e}")
+
 
 
         
 
 
 bot.run(token)
+

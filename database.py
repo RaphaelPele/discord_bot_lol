@@ -51,14 +51,10 @@ player = Profil('euw1','raphalefou79')
 
 matchid = lol_watcher.match.matchlist_by_puuid(region='EUW1', puuid= player.getPuuidPlayer(), count=1)
 
-cur.execute("SELECT * FROM follow")
-rows_to_update = cur.fetchall()
+# test('raphalefou79','euw1','10')
 
-for row in rows_to_update:
-    print(row)
-    cur.execute("UPDATE follow SET matchid = ? ", (matchid[0]))
-    print(row)
-    
+cur.execute("UPDATE follow SET matchid = ? WHERE matchid = 10", ('100',))
+db.commit()
     
     
     # if pseudo in liste_player.keys():
