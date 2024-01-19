@@ -61,12 +61,12 @@ async def follow(ctx, region_set, pseudo):
     
     try:
         channel = ctx.channel.id
-        cur.execute("SELECT pseudo, region FROM follow WHERE pseudo = (?) AND region = (?) AND region = (?)", (pseudo, region_set, channel))
+        cur.execute("SELECT pseudo, region FROM follow WHERE pseudo = (?) AND region = (?) AND channel_id = (?)", (pseudo, region_set, channel))
         result = cur.fetchone()
         
         if result:
-            print("Vous suivez déjà ce joueur !")
-        
+            await ctx.send("Vous suivez **déjà** ce joueur !")
+            
         else:
             
             player = Profil(region_set, pseudo)
