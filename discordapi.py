@@ -140,7 +140,7 @@ async def follow_send():
             # print("test")
             
             try:
-                await channel.send(file=discord.File(r'C:\Users\rapha\Desktop\dev\discord-bot\img\match\match'+ row[2]+'.png'))
+                await channel.send(file=discord.File(r'img/match/match'+ row[2]+'.png'))
             except Exception as e:
                 print(f"Erreur lors de l'envoi du fichier : {e}")
 

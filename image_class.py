@@ -176,7 +176,7 @@ class Match:
     
     
     def get_champion_icon_path(self)-> str:
-        return "C:\\Users\\rapha\\Desktop\\dev\\discord-bot\\img\\champIcon\\" + self.champion + "Square.png"       
+        return "img/champIcon/" + self.champion + "Square.png"       
     
           
 
@@ -190,8 +190,8 @@ def statsImage(region:str,pseudo:str,match_id:str, lpGain:str = "0"):
     """
     match = Match(region, pseudo, match_id)
     player = Profil(region, pseudo)
-    font = ImageFont.truetype("arial.ttf", 17)
-    font_bold = ImageFont.truetype("C:\\Windows\\Fonts\\arialbd.ttf", 17)
+    font = ImageFont.truetype("/usr/share/fonts/truetype/msttcorefonts/arial.ttf", 17) #/usr/share/fonts/truetype/msttcorefonts/arial.ttf
+    font_bold = ImageFont.truetype("/usr/share/fonts/truetype/msttcorefonts/arialbd.ttf", 17) #/usr/share/fonts/truetype/msttcorefonts/arialbd.ttf
 
     color = (158,145,142)
     coordonnes = {'pseudo': (23,35), 'kills': (291, 21), 'deaths': (326,21), 'assists': (359, 21), 'win': (23,60), 'kda': (305,45), 'goldsEarned': (460,15), 'gameDuration' : (23,80), 'lpGain': (460,40), 'rank': (460,60)}
@@ -203,20 +203,20 @@ def statsImage(region:str,pseudo:str,match_id:str, lpGain:str = "0"):
     
     # Si win = True -> écrire Victory
     if match.win == True:
-        imgResult = Image.open(r"C:\Users\rapha\Desktop\dev\discord-bot\img\opgg_win_template.png")
+        imgResult = Image.open(r"img/opgg_win_template.png")
         imgResult = imgResult.convert("RGBA")
         draw = ImageDraw.Draw(imgResult)
         draw.text(coordonnes['win'], 'Victory', fill=color, font= font)
     
     # Si win = False -> Defeat   
     else:
-        imgResult = Image.open(r"C:\Users\rapha\Desktop\dev\discord-bot\img\opgg_lose_template.png")
+        imgResult = Image.open(r"img/opgg_lose_template.png")
         imgResult = imgResult.convert("RGBA")
         draw = ImageDraw.Draw(imgResult)
         draw.text(coordonnes['win'], 'Defeat', fill=color, font= font)
     
     # Toutes les données à écrire
-    draw.text(coordonnes['pseudo'], str(pseudo), fill=color, font= ImageFont.truetype("C:\\Windows\\Fonts\\arialbd.ttf", 18))
+    draw.text(coordonnes['pseudo'], str(pseudo), fill=color, font= font_bold)
     draw.text(coordonnes['kills'],str(match.kills), fill=color, font=font)
     draw.text(coordonnes['deaths'], str(match.deaths), fill=color, font=font)
     draw.text(coordonnes['assists'], str(match.assists), fill=color, font=font)
@@ -240,26 +240,26 @@ def statsImage(region:str,pseudo:str,match_id:str, lpGain:str = "0"):
     
     imgResult.alpha_composite(championIcon, (180,10))
 
-    imgResult.save('C:\\Users\\rapha\\Desktop\\dev\\discord-bot\\img\\match\\match' + match_id + '.png', 'png')
+    imgResult.save('img/match/match' + match_id + '.png', 'png')
 
     
 
 
 
-# info = lol_watcher.summoner.by_name("euw1", "raphalefou79")
-# puuid = info["puuid"]
+info = lol_watcher.summoner.by_name("euw1", "raphalefou79")
+puuid = info["puuid"]
 
-# region = "euw1"
-# player = "raphalefou79"
+region = "euw1"
+player = "raphalefou79"
 
-# lol_watcher.match.matchlist_by_puuid(region=region, puuid=puuid, count=1)
+lol_watcher.match.matchlist_by_puuid(region=region, puuid=puuid, count=1)
 
-# matchid = lol_watcher.match.matchlist_by_puuid(region=region, puuid=puuid, count=1)
+matchid = lol_watcher.match.matchlist_by_puuid(region=region, puuid=puuid, count=1)
 
-# for match in matchid:
+for match in matchid:
 
-#     game = lol_watcher.match.by_id(match_id=match, region=region)
-#     statsImage("euw1", "raphalefou79", match, str(25))
+    game = lol_watcher.match.by_id(match_id=match, region=region)
+    statsImage("euw1", "raphalefou79", match, str(25))
 
 
 # player = Profil("euw1", "raphalefou79")
