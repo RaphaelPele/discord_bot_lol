@@ -176,7 +176,7 @@ class Match:
     
     
     def get_champion_icon_path(self)-> str:
-        return "img/champIcon/" + self.champion + "Square.png"       
+        return "/home/debian/discord_bot_lol/img/champIcon/" + self.champion + "Square.png"       
     
           
 
@@ -203,14 +203,14 @@ def statsImage(region:str,pseudo:str,match_id:str, lpGain:str = "0"):
     
     # Si win = True -> écrire Victory
     if match.win == True:
-        imgResult = Image.open(r"img/opgg_win_template.png")
+        imgResult = Image.open(r"/home/debian/discord_bot_lol/img/opgg_win_template.png")
         imgResult = imgResult.convert("RGBA")
         draw = ImageDraw.Draw(imgResult)
         draw.text(coordonnes['win'], 'Victory', fill=color, font= font)
     
     # Si win = False -> Defeat   
     else:
-        imgResult = Image.open(r"img/opgg_lose_template.png")
+        imgResult = Image.open(r"/home/debian/discord_bot_lol/img/opgg_lose_template.png")
         imgResult = imgResult.convert("RGBA")
         draw = ImageDraw.Draw(imgResult)
         draw.text(coordonnes['win'], 'Defeat', fill=color, font= font)
@@ -240,7 +240,7 @@ def statsImage(region:str,pseudo:str,match_id:str, lpGain:str = "0"):
     
     imgResult.alpha_composite(championIcon, (180,10))
 
-    imgResult.save('img/match/match' + match_id + '.png', 'png')
+    imgResult.save('/home/debian/discord_bot_lol/img/match/match' + match_id + '.png', 'png')
 
     
 
@@ -267,3 +267,4 @@ def statsImage(region:str,pseudo:str,match_id:str, lpGain:str = "0"):
 
 # lp = lol_watcher.summoner.by_name("euw1", "raphalefou79")
 # lol_watcher.league.by_summoner("euw1", lp['id'])
+#{}
