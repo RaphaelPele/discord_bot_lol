@@ -246,20 +246,20 @@ def statsImage(region:str,pseudo:str,match_id:str, lpGain:str = "0"):
 
 
 
-info = lol_watcher.summoner.by_name("euw1", "raphalefou79")
-puuid = info["puuid"]
+# info = lol_watcher.summoner.by_name("euw1", "raphalefou79")
+# puuid = info["puuid"]
 
-region = "euw1"
-player = "raphalefou79"
+# region = "euw1"
+# player = "raphalefou79"
 
-lol_watcher.match.matchlist_by_puuid(region=region, puuid=puuid, count=1)
+# lol_watcher.match.matchlist_by_puuid(region=region, puuid=puuid, count=1)
 
-matchid = lol_watcher.match.matchlist_by_puuid(region=region, puuid=puuid, count=1)
+# matchid = lol_watcher.match.matchlist_by_puuid(region=region, puuid=puuid, count=1)
 
-for match in matchid:
+# for match in matchid:
 
-    game = lol_watcher.match.by_id(match_id=match, region=region)
-    statsImage("euw1", "raphalefou79", match, str(25))
+#     game = lol_watcher.match.by_id(match_id=match, region=region)
+#     statsImage("euw1", "raphalefou79", match, str(25))
 
 
 # player = Profil("euw1", "raphalefou79")
